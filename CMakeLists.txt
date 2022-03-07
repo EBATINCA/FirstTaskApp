@@ -1,20 +1,21 @@
-cmake_minimum_required(VERSION 3.13.4)
+cmake_minimum_required(VERSION 3.16.3)
 
-# Enable C++11
+# Enable C++14
 if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+set (EP_GIT_PROTOCOL "https")
 
 # Slicer sources
 include(FetchContent)
 if(NOT DEFINED slicersources_SOURCE_DIR)
   # Download Slicer sources and set variables slicersources_SOURCE_DIR and slicersources_BINARY_DIR
   FetchContent_Populate(slicersources
-    GIT_REPOSITORY git://github.com/Slicer/Slicer
-    # GIT_TAG        002be18086c3054bb834dd674401ba624629e4f6 # 4.11.20200930
-    GIT_TAG        bd70d2dd254d0556f574388392bf91f1562cb055 # 2021.01.21. (fix MacOS Big Sur build)
+    GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer
+    GIT_TAG        da8607855e2174d165a15352a42b86b3eb33d866 # 2022.03.07. (just before Slicer 5.0)
     GIT_PROGRESS   1
     )
 else()
