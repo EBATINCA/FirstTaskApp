@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16.3)
 
-# Enable C++14
+# Enable C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -15,7 +15,7 @@ if(NOT DEFINED slicersources_SOURCE_DIR)
   # Download Slicer sources and set variables slicersources_SOURCE_DIR and slicersources_BINARY_DIR
   FetchContent_Populate(slicersources
     GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/Slicer/Slicer
-    GIT_TAG        da8607855e2174d165a15352a42b86b3eb33d866 # 2022.03.07. (just before Slicer 5.0)
+    GIT_TAG        0a13b9c61f835c2a13a5b0686a43da1aba43b52d  # Slicer 5.6.0
     GIT_PROGRESS   1
     )
 else()
@@ -125,7 +125,7 @@ set(Slicer_QTSCRIPTEDMODULES_DISABLED
   Endoscopy
   LabelStatistics
   PerformanceTests
-  SampleData
+  # SampleData
   VectorToScalarVolume
   )
 

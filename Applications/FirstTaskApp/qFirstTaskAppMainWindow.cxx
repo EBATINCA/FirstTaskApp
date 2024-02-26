@@ -10,6 +10,7 @@
 
 // Qt includes
 #include <QDesktopWidget>
+#include <QLabel>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -60,12 +61,18 @@ void qFirstTaskAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   mainWindow->setWindowIcon(QIcon(":/Icons/Medium/DesktopIcon.png"));
 
-  QPixmap logo(":/LogoFull.png");
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-  qreal dpr = sqrt(qApp->desktop()->logicalDpiX()*qreal(qApp->desktop()->logicalDpiY()) / (qApp->desktop()->physicalDpiX()*qApp->desktop()->physicalDpiY()));
-  logo.setDevicePixelRatio(dpr);
-#endif
-  this->LogoLabel->setPixmap(logo);
+  QLabel* logoLabel = new QLabel();
+  logoLabel->setObjectName("LogoLabel");
+  // QIcon stores multiple versions of the image (in different sizes)
+  // and uses the most suitable one (depending on DevicePixelRatio).
+  // QLabel cannot take a QIcon, therefore we need to get the most suitable
+  // QPixmap from the QIcon (base.png, base@2x, ...).
+  // To achieve this, we first determine the pixmap size in device independent units,
+  // which is the size of the base image (icon.availableSizes().first(), because for that
+  // DevicePixelRatio=1.0), and then we retieve the pixmap for this size.
+  QIcon icon = QIcon(":/LogoFull.png");
+  QPixmap logo = icon.pixmap(icon.availableSizes().first());
+  logoLabel->setPixmap(logo);
 
   // Hide the toolbars
   this->MainToolBar->setVisible(false);

@@ -17,7 +17,7 @@ set(DESCRIPTION_SUMMARY
   "Mock Slicer based custom application serving as the basis of a first task for developers"
   )
 set(DESCRIPTION_FILE
-  ${Slicer_SOURCE_DIR}/README.txt
+  ${Slicer_SOURCE_DIR}/README.md
   )
 
 set(LAUNCHER_SPLASHSCREEN_FILE
