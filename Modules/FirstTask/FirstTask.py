@@ -89,6 +89,11 @@ class FirstTaskWidget(ScriptedLoadableModuleWidget):
     self.togglePythonInteractorButton.connect('clicked()', self.onTogglePythonInteractorButton)
     self.exitButton.connect('clicked()', self.onExitButtonClicked)
 
+    self.ui.showDicomBrowserButton.toggled.connect(self.onShowDicomBrowserButtonToggled)
+    self.ui.SubjectHierarchyTreeView.currentItemChanged.connect(self.onSubjectHierarchyTreeViewCurrentItemChanged)
+
+    self.parent.mrmlSceneChanged.connect(self.onMrmlSceneChanged)
+
   #------------------------------------------------------------------------------
   def disconnect(self):
     logging.debug('FirstTask.disconnect')
@@ -102,6 +107,23 @@ class FirstTaskWidget(ScriptedLoadableModuleWidget):
     self.togglePythonInteractorButton.clicked.disconnect()
     self.exitButton.clicked.disconnect()
 
+    self.ui.showDicomBrowserButton.toggled.disconnect()
+
+  #------------------------------------------------------------------------------
+  def onShowDicomBrowserButtonToggled(self, on):
+    if on:
+      dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
+      slicer.modules.DICOMWidget.enter()
+    else:
+      slicer.modules.DICOMWidget.exit()
+
+  #------------------------------------------------------------------------------
+  def onSubjectHierarchyTreeViewCurrentItemChanged(self, itemID):
+    shNode = slicer.vtkMRMLSubjectHierarchyNode.GetSubjectHierarchyNode(slicer.mrmlScene)
+    node = shNode.GetItemDataNode(itemID)
+    if node and node.IsA('vtkMRMLScalarVolumeNode'):
+      self.ui.VolumeInfoWidget.setVolumeNode(node)
+
   #------------------------------------------------------------------------------
   def loadStyleSheet(self):
     styleFilePath = os.path.join(self.logic.fileDir, 'Resources', 'StyleSheets', 'FirstTaskStyle.qss')
@@ -114,6 +136,11 @@ class FirstTaskWidget(ScriptedLoadableModuleWidget):
     ts = qt.QTextStream(f)
     stylesheet = ts.readAll()
     return stylesheet
+
+  #------------------------------------------------------------------------------
+  def onMrmlSceneChanged(self, mrmlScene):
+    self.ui.SubjectHierarchyTreeView.setMRMLScene(slicer.mrmlScene)
+    self.ui.VolumeInfoWidget.setMRMLScene(slicer.mrmlScene)
 
   #------------------------------------------------------------------------------
   def onStartupCompleted(self):
@@ -185,6 +212,16 @@ class FirstTaskWidget(ScriptedLoadableModuleWidget):
     self.ui = slicer.util.childWidgetVariables(uiWidget)
 
     self.sliceletPanelLayout.addWidget(uiWidget)
+
+    # Hierarchy tree view
+    self.ui.SubjectHierarchyTreeView.dragDropMode = qt.QAbstractItemView.InternalMove
+    self.ui.SubjectHierarchyTreeView.selectionMode = qt.QAbstractItemView.ExtendedSelection
+    self.ui.SubjectHierarchyTreeView.setColumnHidden(self.ui.SubjectHierarchyTreeView.model().idColumn, True)
+    self.ui.SubjectHierarchyTreeView.setColumnHidden(self.ui.SubjectHierarchyTreeView.model().transformColumn, True)
+    self.ui.SubjectHierarchyTreeView.setEditTriggers(qt.QAbstractItemView.DoubleClicked)
+
+    dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
+    slicer.util.findChild(dicomWidget.browserWidget, 'ToolBar').visible = True
 
   #------------------------------------------------------------------------------
   def showSlicelet(self, maximizeViews=False, maximizeMainWindow=False, hideStatusBar=True):
