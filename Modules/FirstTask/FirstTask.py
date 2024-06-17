@@ -1,9 +1,12 @@
+import ctk
+import logging
 import os
-from __main__ import vtk, qt, ctk, slicer
+import qt
+import slicer
+import vtk
 
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
-import logging
 
 #------------------------------------------------------------------------------
 #
